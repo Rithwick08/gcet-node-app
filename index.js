@@ -15,20 +15,7 @@ app.listen(8080,()=>{
     console.log("Server Started on port 8080 and mongodb connected");
 });
 
-const userSchema=mongoose.Schema({
-  name:String,
-  email:String,
-  pass:String
-});
-
-const productSchema=mongoose.Schema({
-  name:String,
-  price:Number
-});
-
-const user=mongoose.model("User",userSchema);
 app.use(express.json());
-const Product = mongoose.model("Product", productSchema);
 
 app.get("/", (req, res) => {
   const html = `
@@ -94,7 +81,6 @@ app.use(express.json()); // Make sure this is set at the top
 
 app.post("/products", async (req, res) => {
   const { name } = req.body;  // only take 'name' for searching
-
   try {
     // Find all products matching the name
     const results = await Product.find({ name: name });
@@ -109,8 +95,3 @@ app.post("/products", async (req, res) => {
     res.status(500).json({ message: "Server error" });
   }
 });
-
-
-
-
-
