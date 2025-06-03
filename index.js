@@ -1,6 +1,6 @@
 import express from 'express';
 import cors from 'cors'; // ✅ import cors
-
+import mongoose from 'mongoose';
 const app = express();
 
 // ✅ Enable CORS for Vite frontend (port 5174)
@@ -10,12 +10,37 @@ app.use(cors({
   }));
   
 
-app.listen(8080, () => {
-  console.log("Server Started on http://localhost:8080");
+app.listen(8080,()=>{
+  mongoose.connect("mongodb://localhost:27017/gcet");
+    console.log("Server Started on port 8080 and mongodb connected");
 });
 
+const userSchema=mongoose.Schema({
+  name:{type:String}
+});
+
+const user=mongoose.model("User",userSchema);
+
+
 app.get("/", (req, res) => {
-  return res.send("Hello world");
+  const html = `
+    <!DOCTYPE html>
+    <html>
+    <head>
+      <title>Node JS API's Routes</title>
+    </head>
+    <body>
+      <h1>Node JS API's Routes</h1>
+      <ul>
+        <li><a href="/greet">Greet</a></li>
+        <li><a href="/name">Name</a></li>
+        <li><a href="/weather">Weather</a></li>
+        <li><a href="/products">Products</a></li>
+      </ul>
+    </body>
+    </html>
+  `;
+  res.send(html);
 });
 
 app.get("/greet", (req, res) => {
@@ -38,3 +63,9 @@ app.get("/products", (req, res) => {
   ];
   return res.json(products);
 });
+
+app.post("/register", async(req,resp)=>{
+  const {name}=req.body;
+    const res=await user.insertOne({name:name});  
+    return resp.json(res);
+})
