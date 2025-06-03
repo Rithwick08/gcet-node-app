@@ -16,11 +16,19 @@ app.listen(8080,()=>{
 });
 
 const userSchema=mongoose.Schema({
-  name:{type:String}
+  name:String,
+  email:String,
+  pass:String
+});
+
+const productSchema=mongoose.Schema({
+  name:String,
+  price:Number
 });
 
 const user=mongoose.model("User",userSchema);
-
+app.use(express.json());
+const Product = mongoose.model("Product", productSchema);
 
 app.get("/", (req, res) => {
   const html = `
@@ -64,8 +72,28 @@ app.get("/products", (req, res) => {
   return res.json(products);
 });
 
-app.post("/register", async(req,resp)=>{
-  const {name}=req.body;
-    const res=await user.insertOne({name:name});  
-    return resp.json(res);
+app.post("/register", async (req, res) => {
+  const { name,email,pass } = req.body;
+  const result = await user.insertOne({ name: name,email: email,pass: pass });
+  return res.json(result);  // use Express res to send response
+});
+
+app.post("/login", async(req,res) => {
+  const { email,pass } = req.body;
+  const result = await user.findOne({email:email,pass:pass});
+  if(result){
+    return res.json("user found");
+  }
+  else{
+    return res.json("No user found");
+  }
 })
+app.get("/product", async (req, res) => {
+  try {
+    const allProducts = await Product.find({});
+    return res.json(allProducts);
+  } catch (err) {
+    console.error(err);
+    return res.status(500).json({ error: "Server error" });
+  }
+});
