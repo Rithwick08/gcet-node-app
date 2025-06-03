@@ -5,9 +5,10 @@ const app = express();
 
 // ✅ Enable CORS for Vite frontend (port 5174)
 app.use(cors({
-  origin: 'http://localhost:5174',
-  credentials: true
-}));
+    origin: '*', // allow all origins (not recommended for production)
+    credentials: true
+  }));
+  
 
 app.listen(8080, () => {
   console.log("Server Started on http://localhost:8080");
