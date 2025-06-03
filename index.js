@@ -63,13 +63,14 @@ app.get("/weather", (req, res) => {
   return res.send("Sunny (31 C)");
 });
 
-app.get("/products", (req, res) => {
-  const products = [
-    { id: 1, name: "product 1", price: "45" },
-    { id: 2, name: "product 2", price: "95" },
-    { id: 3, name: "product 3", price: "50" },
-  ];
-  return res.json(products);
+app.get("/products", async (req, res) => {
+  try {
+    const allProducts = await Product.find({});
+    return res.json(allProducts);
+  } catch (err) {
+    console.error(err);
+    return res.status(500).json({ error: "Server error" });
+  }
 });
 
 app.post("/register", async (req, res) => {
@@ -87,13 +88,29 @@ app.post("/login", async(req,res) => {
   else{
     return res.json("No user found");
   }
-})
-app.get("/product", async (req, res) => {
+});
+
+app.use(express.json()); // Make sure this is set at the top
+
+app.post("/products", async (req, res) => {
+  const { name } = req.body;  // only take 'name' for searching
+
   try {
-    const allProducts = await Product.find({});
-    return res.json(allProducts);
-  } catch (err) {
-    console.error(err);
-    return res.status(500).json({ error: "Server error" });
+    // Find all products matching the name
+    const results = await Product.find({ name: name });
+    
+    if (results.length > 0) {
+      return res.json(results);  // return all matching products with their prices
+    } else {
+      return res.status(404).json({ message: "No product found" });
+    }
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Server error" });
   }
 });
+
+
+
+
+
