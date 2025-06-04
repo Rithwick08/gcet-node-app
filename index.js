@@ -77,4 +77,25 @@ app.use("/products", productRouter);
 app.listen(8080, () => {
   mongoose.connect(`${MONGODB_URI}`);
   console.log("Server Started at 8080");
+
 });
+app.get("/", (req, res) => {
+    const html = `
+      <!DOCTYPE html>
+      <html>
+      <head>
+        <title>Node JS API's Routes</title>
+      </head>
+      <body>
+        <h1>Node JS API's Routes</h1>
+        <ul>
+          <li><a href="/greet">Greet</a></li>
+          <li><a href="/name">Name</a></li>
+          <li><a href="/weather">Weather</a></li>
+          <li><a href="/products">Products</a></li>
+        </ul>
+      </body>
+      </html>
+    `;
+    res.send(html);
+  });
