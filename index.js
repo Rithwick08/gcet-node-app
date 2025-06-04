@@ -74,8 +74,18 @@ app.use("/users", userRouter);
 app.use("/orders", orderRouter);
 app.use("/products", productRouter);
 
-app.listen(8080, () => {
-  mongoose.connect(`${MONGODB_URI}`);
-  console.log("Server Started at 8080");
+// app.listen(8080, () => {
+//   mongoose.connect(`${MONGODB_URI}`);
+//   console.log("Server Started at 8080");
 
-});
+// });
+mongoose
+  .connect(MONGODB_URI)
+  .then(() => {
+    app.listen(8080, () => {
+      console.log("Server Started on port 8080");
+    });
+  })
+  .catch((error) => {
+    console.log(error);
+  });
